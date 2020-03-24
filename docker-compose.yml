@@ -1,0 +1,25 @@
+version: "3.6"
+services:
+    mongo:
+        
+        container_name: scheduler-mongo-container
+        image: mongo
+        command: --quiet
+        ports:
+          - "27017:27017"
+    app:
+        build:
+            "."
+        container_name: scheduler-container
+        image: node
+        #restart: always
+        volumes:
+            - .:/app
+        #entrypoint: /bin/bash
+        ports:
+            - "3000:3000"
+            - "5000:5000"
+        links: 
+            - "mongo"
+        depends_on: 
+            - "mongo"
