@@ -1,4 +1,6 @@
 import mongoose from 'mongoose'
+mongoose.set('useFindAndModify', false)
+mongoose.set('useUnifiedTopology', true)
 
 function createNewMongoDB() {
     //var mongoose = require('mongoose');

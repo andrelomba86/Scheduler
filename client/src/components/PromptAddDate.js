@@ -8,14 +8,11 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import {
   SHOW_NAMES_AND_DATES_AND_CALENDAR,
-} from "./Consts.js"
-
-import {
   DAY_OF_WEEK,
   PERIOD_OF_THE_DAY_MORNING,
   PERIOD_OF_THE_DAY_AFTERNOON,
   PERIOD_OF_THE_DAY_BOTH
-} from './Consts'
+} from '../Consts'
 
 import {
   useDispatch,
@@ -44,8 +41,6 @@ export function PromptAddDate(props) {
   const [dayOfWeek, setDayOfWeek] = useState([0, 0, 0, 0, 0, 0, 0])
   const [checksVisibility, setChecksVisibility] = useState([0, 0, 0, 0, 0, 0, 0])
   console.log("promptadddate rendering", dayOfWeek, "visibility", checksVisibility)
-
-
 
   return (
     <>
