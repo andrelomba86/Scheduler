@@ -11,7 +11,7 @@ import {
   SHOW_REMOVE_DATES_PROMPT,
   DAY_OF_WEEK,
   PERIOD_OF_THE_DAY
-} from './Consts'
+} from '../Consts'
 
 import {
   useSelector,
@@ -36,11 +36,8 @@ export function ListDates(props) {
   const { showForm } = useSelector(getParticipantsState)
 
   if (dbCollection.length === 0) return <></>
-  var dates = dbCollection.find((item) => item._id === currentId)
-  // console.log("----", dates, "currentId:", currentId)
-  if (dates) { dates = dates.dates }
-
-  // console.log("dates", dates)
+  var dates = dbCollection.find((item) => item._id === currentId).dates
+  
   const convertDate = (date) => new Date(date).toLocaleDateString('pt-BR')
 
   return (
@@ -61,6 +58,7 @@ export function ListDates(props) {
                       </>
                     )
                   }
+                  return <></>
                 })}
 
                 {/* if */ (showForm & SHOW_REMOVE_DATES_PROMPT) ? (

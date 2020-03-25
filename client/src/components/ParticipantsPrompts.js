@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import {
   SHOW_NAMES_AND_DATES_AND_CALENDAR,
-} from "./Consts.js"
+} from "../Consts.js"
 
 import {
   useSelector,

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios'
-import { SHOW_NAMES_AND_DATES_AND_CALENDAR } from '../Consts'
+import { SHOW_NAMES_AND_DATES_AND_CALENDAR } from '../../Consts'
 
 export const slice = createSlice({
   name: 'participants',

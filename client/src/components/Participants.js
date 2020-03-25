@@ -5,18 +5,20 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import { PromptAddParticipant, PromptRemoveParticipant } from './ParticipantsPrompts'
 import { PromptAddDate } from './PromptAddDate'
 import { ListDates } from './ListDates'
+
 import {
   SHOW_NAMES,
   SHOW_DATES,
   SHOW_ADD_PARTICIPANT_PROMPT,
   SHOW_REMOVE_PARTICIPANT_PROMPT,
   SHOW_ADD_DATES_PROMPT
-} from "./Consts.js"
+} from "../Consts.js"
 
 import {
   useSelector,
   useDispatch
 } from 'react-redux';
+
 import {
   updateDBCollection,
   getParticipantsState,
