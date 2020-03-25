@@ -10,6 +10,7 @@ import { Calendar } from './components/Calendar';
 import { getParticipantsState } from './components/redux/participantsSlice';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { SHOW_CALENDAR } from './Consts';
 
 function App() {

@@ -22,17 +22,12 @@ export function DatesChecker() {
     }
     const pointsIndex = 0
     const namesIndex = 1
+
     // Loop para cada chave (pessoa)
     // Formato do objeto Data = { chave: [ [data1, data2] , [ [data1], [data2] ] }
     Object.entries(collection).forEach(([_key, doc]) => {
 
-      // console.log("doc", doc.dates)
-
-      // Object.entries(doc).forEach(([_key, date]) => {
-
-      // for (var i = 0; i < value.length; i++) {
-      doc.dates.map((date, _index) => {
-
+      doc.dates.forEach((date, _index) => {
 
         if (IsBetweenDatesCheck(dateToCheck, new Date(date.start), new Date(date.end))) {
 
@@ -72,15 +67,33 @@ export function DatesChecker() {
     if (array.find((p) => p === name) === undefined) return false
     return true
   }
-  
-  function MonthCheck(month, year) {
-    var result = []
-    for (var i = 0; i < new Date(2020, month + 1, 0).getDate(); i++) {
-      const day = i + 1
 
-      result[day] = DateAvailabilityPoints(new Date(year, month, day))
+  function Calendar(month, year) {
+
+    var firstDayOfWeek = new Date(year, month, 1).getDay()
+    const totalMonthDays = new Date(year, month + 1, 0).getDate()
+
+    var calendar = [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ]
+
+    const freeRow = ( firstDayOfWeek + totalMonthDays < 36   ? 1 : 0)   
+    
+    for (var i = 0; i < totalMonthDays; i++) {
+      var week = Math.floor(firstDayOfWeek / 7) + freeRow
+      var dayOfWeek = (firstDayOfWeek % 7)
+      const day = i + 1
+      calendar[week][dayOfWeek] = DateAvailabilityPoints(new Date(year, month, day))
+
+      firstDayOfWeek++
     }
-    return result
+    console.log(calendar)
+    return calendar
   }
 
   function IsBetweenDatesCheck(DateToCheck, FirstDate, LastDate) {
@@ -88,8 +101,20 @@ export function DatesChecker() {
   }
   return {
     setCollection,
-    MonthCheck
+    Calendar
   }
 }
 
 // module.exports = createNewDateAvailability;
+
+
+// function MonthCheck(month, year) {
+
+  // var result = []
+  // for (var i = 0; i < new Date(2020, month + 1, 0).getDate(); i++) {
+    // const day = i + 1
+
+    // result[day] = DateAvailabilityPoints(new Date(year, month, day))
+  // }
+  // return result
+// }
