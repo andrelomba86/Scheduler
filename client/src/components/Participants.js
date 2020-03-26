@@ -11,7 +11,8 @@ import {
   SHOW_DATES,
   SHOW_ADD_PARTICIPANT_PROMPT,
   SHOW_REMOVE_PARTICIPANT_PROMPT,
-  SHOW_ADD_DATES_PROMPT
+  SHOW_ADD_DATES_PROMPT,
+  SHOW_EDIT_DATES_PROMPT,
 } from "../Consts.js"
 
 import {
@@ -41,10 +42,10 @@ export function Participants() {
   return (
     <>
       {(showForm & SHOW_NAMES) ? (<ListParticipantsNames />) : null}
-      {(showForm & SHOW_ADD_PARTICIPANT_PROMPT) ? (<PromptAddParticipant />) : null}
+      {(showForm & SHOW_ADD_PARTICIPANT_PROMPT ) ? (<PromptAddParticipant />) : null}
       {(showForm & SHOW_REMOVE_PARTICIPANT_PROMPT) ? (<PromptRemoveParticipant />) : null}
       {(showForm & SHOW_DATES) ? <ListDates /> : null}
-      {(showForm & SHOW_ADD_DATES_PROMPT) ? (<PromptAddDate />) : null}
+      {(showForm & SHOW_ADD_DATES_PROMPT || showForm & SHOW_EDIT_DATES_PROMPT) ? (<PromptAddDate />) : null}
     </>
   );
 }

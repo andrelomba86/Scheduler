@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
-// import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table'
 import Col from 'react-bootstrap/Col';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip'
-// import Row from 'react-bootstrap/Row';
+import Badge from 'react-bootstrap/Badge';
 import { DatesChecker } from '../DatesChecker'
 
 // import Badge from 'react-bootstrap/Badge';
@@ -35,7 +34,7 @@ import {
 
 
 
-export function Calendar(props) {
+export function Calendar() {
   // const dispatch = useDispatch()
   const { dbCollection } = useSelector(getParticipantsState)
   const [month, setMonth] = useState(0)
@@ -70,48 +69,33 @@ export function Calendar(props) {
       {/* </ButtonGroup> */}
       <div className="p-4">
         <Table bordered={true} className="text-center">
+          {/*   */}
           <thead className="   ">
             <tr>
-              {/* <th>D</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th> */}
-              {["D", "S", "T", "Q", "Q", "S", "S"].map((d) => <th>{d}</th>)}
+              {["D", "S", "T", "Q", "Q", "S", "S"].map((d) => <th colspan='2'>{d}</th>)}
+            </tr>
+            <tr>
+              {Array(7).fill(["M", "T"]).flat().map((d) => <th>{d}</th>)}
             </tr>
           </thead>
           <tbody>
-            {
+            {calendar.map((rows, index) => {
+              return (<>
+                <tr>
+                  {rows.map((day, index) =>
+                  (day 
+                    ? <>
+                      <td colspan="2" className="text-white bg-primary p-0">{day[0]}</td>
+                    </>
 
-              calendar.map((rows, index) => {
-                return (
-                  <tr>
-                    {rows.map((day, index) => {
-                      return (
-                        <td>
-                          {
-                            (/*if */ day[PERIOD_OF_THE_DAY_MORNING] ?
-                              <>
-                                M:
-                                <OverlayTrigger overlay={<Tooltip>{day[PERIOD_OF_THE_DAY_MORNING][1].toString()}</Tooltip>}>
-                                  <span>
-                                    {day[PERIOD_OF_THE_DAY_MORNING][0]}
-                                  </span>
-                                </OverlayTrigger>
-
-                                <br/><br/>T: 
-                                <OverlayTrigger overlay={<Tooltip>{day[PERIOD_OF_THE_DAY_AFTERNOON][1].toString()}</Tooltip>}>
-                                  <span>
-                                    {day[PERIOD_OF_THE_DAY_AFTERNOON][0]}
-                                  </span>
-                                </OverlayTrigger>
-                              </>
-                              /* else */
-                              : String.fromCharCode(160)
-                            )}
-                        </td>
-                      )
-                    })}
-                  </tr>
-                )
-              })
-            }
+                    : <td colspan="2" className="p-0"></td>
+                  )
+                  
+                  )}
+                </tr>
+                <tr>{rows.map((day, index) => <DayOfCalendar day={day} />)}</tr>
+              </>)
+            })}
           </tbody>
         </Table>
       </div>
@@ -119,16 +103,47 @@ export function Calendar(props) {
 
   )
 }
-// https://steamcommunity.com/profiles/76561198810314626/
-// function Calendarize(monthCheckArray) {
-//   for (var i = 0; i < monthCheckArray.length; i++) {
 
-//     // [
-//     //   [1, 2, 3, 4, 5, 6, 7],
-//     //   [8, 9, 10, 11, 12, 13, 14],
-//     //   [15, 16, 17, 18, 19, 20, 21],
-//     //   [22, 23, 24, 25, 26, 27, 28],
-//     //   [30, 31, 32, 33, 34, 35, 36]
-//     // ]
-//   }
-// }
+export function DayOfCalendar({ day }) {
+  if (day[PERIOD_OF_THE_DAY_MORNING]) {
+    return (
+      <>
+        <td style={bgColor(day[PERIOD_OF_THE_DAY_MORNING][0])}>
+          {/* <Badge variant="primary">M</Badge><br/> */}
+          <OverlayTrigger overlay={<Tooltip>{day[PERIOD_OF_THE_DAY_MORNING][1].toString()}</Tooltip>}>
+            <span>
+              {day[PERIOD_OF_THE_DAY_MORNING][0]}
+            </span>
+          </OverlayTrigger>
+        </td>
+        <td  style={bgColor(day[PERIOD_OF_THE_DAY_AFTERNOON][0])}>
+          <OverlayTrigger overlay={<Tooltip>{day[PERIOD_OF_THE_DAY_AFTERNOON][1].toString()}</Tooltip>}>
+            <span>
+              {day[PERIOD_OF_THE_DAY_AFTERNOON][0]}
+            </span>
+          </OverlayTrigger>
+        </td>
+      </>
+    )
+  }
+  else {
+    return <>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </>
+  }
+
+}
+
+function bgColor(points) {
+  const maxpoints = 8 
+  if (points === 0) return { "background-color": "#BBFFBB" }
+  if (points > maxpoints) points = maxpoints
+  points = maxpoints - points
+  var gb = 25 * points
+  
+  var css =  { "background-color": `rgb(255, ${gb}, ${gb})` }
+  
+  console.log("CSS", css)
+  return css
+}

@@ -17,6 +17,7 @@ export function DatesChecker() {
   // Pontua a disponilibdade de pessoas no dia. Retorna array: [manhã, tarde]
   function DateAvailabilityPoints(dateToCheck) {
     var points = {
+      0: 0,
       [PERIOD_OF_THE_DAY_MORNING]: [0, []],
       [PERIOD_OF_THE_DAY_AFTERNOON]: [0, []]
     }
@@ -26,13 +27,15 @@ export function DatesChecker() {
     // Loop para cada chave (pessoa)
     // Formato do objeto Data = { chave: [ [data1, data2] , [ [data1], [data2] ] }
     Object.entries(collection).forEach(([_key, doc]) => {
-
+      points[0] = dateToCheck.getDate() // define chave 0 do objeto com o dia
       doc.dates.forEach((date, _index) => {
 
         if (IsBetweenDatesCheck(dateToCheck, new Date(date.start), new Date(date.end))) {
 
           var week = date.daysOfWeekAndPeriod
+          // Confere se foi indicado dia da semana (caso a Array esteja com 0's então não foi indicado)
           if (week.every(item => item === 0)) {
+            
             if (!FindInArray(doc.name, points[PERIOD_OF_THE_DAY_MORNING][namesIndex])) {
               points[PERIOD_OF_THE_DAY_MORNING][pointsIndex]++
               points[PERIOD_OF_THE_DAY_MORNING][namesIndex].push(doc.name)
@@ -89,10 +92,11 @@ export function DatesChecker() {
       var dayOfWeek = (firstDayOfWeek % 7)
       const day = i + 1
       calendar[week][dayOfWeek] = DateAvailabilityPoints(new Date(year, month, day))
+      // calendar[week].push(day)
 
       firstDayOfWeek++
     }
-    console.log(calendar)
+    // console.log(calendar)
     return calendar
   }
 

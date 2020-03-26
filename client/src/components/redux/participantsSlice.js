@@ -7,6 +7,7 @@ export const slice = createSlice({
   initialState: {
     isLoading: false,
     currentId: '',
+    editDateIndex: -1,
     dbCollection: [],
     showForm: SHOW_NAMES_AND_DATES_AND_CALENDAR
   },
@@ -32,6 +33,9 @@ export const slice = createSlice({
       console.log("setShowForm()", action.payload)
       state.showForm = action.payload
       
+    },
+    setEditDateIndex(state, action) {
+      state.editDateIndex = action.payload
     }
   }
 })
@@ -106,7 +110,8 @@ export const {
   setDBCollection,
   dbCollection,
   setIsLoading,
-  setShowForm
+  setShowForm,
+  setEditDateIndex
 } = slice.actions;
 
 // The function below is called a selector and allows us to select a value from

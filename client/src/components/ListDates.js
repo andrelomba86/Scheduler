@@ -7,6 +7,7 @@ import Badge from 'react-bootstrap/Badge';
 import {
   SHOW_NAMES_AND_DATES_AND_CALENDAR,
   SHOW_NAMES_AND_ADD_DATES_PROMPT,
+  SHOW_NAMES_AND_EDIT_DATES_PROMPT,
   SHOW_NAMES_AND_REMOVE_DATES_PROMPT,
   SHOW_REMOVE_DATES_PROMPT,
   DAY_OF_WEEK,
@@ -21,6 +22,7 @@ import {
 import {
   getParticipantsState,
   setShowForm,
+  setEditDateIndex,
   submitUpdate
 } from './redux/participantsSlice';
 
@@ -29,7 +31,7 @@ import {
   PromptAddParticipant()  
 */
 
-export function ListDates(props) {
+export function ListDates({ setDateIndex }) {
   const dispatch = useDispatch()
   const { dbCollection, currentId } = useSelector(getParticipantsState)
   const [delIndex, setDelIndex] = useState('')
@@ -70,6 +72,18 @@ export function ListDates(props) {
                   )
                 ) : ( //else
                     <div>
+                      <Badge
+                        pill
+                        variant="success"
+                        as="a"
+                        href="#"
+                        onClick={() => {
+                          dispatch(setShowForm(SHOW_NAMES_AND_EDIT_DATES_PROMPT))
+                          dispatch(setEditDateIndex(index))
+                        }}
+                      >
+                        editar  
+                        </Badge>                      
                       <Badge
                         pill
                         variant="danger"

@@ -8,10 +8,11 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import {
   SHOW_NAMES_AND_DATES_AND_CALENDAR,
+  SHOW_EDIT_DATES_PROMPT,
   DAY_OF_WEEK,
   PERIOD_OF_THE_DAY_MORNING,
   PERIOD_OF_THE_DAY_AFTERNOON,
-  PERIOD_OF_THE_DAY_BOTH
+  PERIOD_OF_THE_DAY_BOTH,  
 } from '../Consts'
 
 import {
@@ -22,7 +23,8 @@ import {
 import {
   setShowForm,
   submitUpdate,
-  getParticipantsState
+  getParticipantsState,
+  editDateIndex
 } from './redux/participantsSlice';
 
 
@@ -30,17 +32,34 @@ import {
   PromptAddParticipant()  
 */
 
-export function PromptAddDate(props) {
+export function PromptAddDate() {
   const dispatch = useDispatch()
-  const { dbCollection, currentId } = useSelector(getParticipantsState)
+  const { dbCollection, currentId, editDateIndex, showForm } = useSelector(getParticipantsState)
   var currentDates = dbCollection.find((item) => item._id === currentId).dates
 
+  var start = 0
+  var end = 0
+  var dOW = [0, 0, 0, 0, 0, 0, 0]
+  var visibility = [0, 0, 0, 0, 0, 0, 0]
+
+  if (showForm & SHOW_EDIT_DATES_PROMPT) {
+    var editDates = currentDates[editDateIndex]
+    start = new Date(editDates.start)
+    end = new Date(editDates.end)
+    dOW = editDates.daysOfWeekAndPeriod
+    // visibility = [1, 1, 1, 1, 1, 1, 1]
+    console.log("currentdates edit", editDates)
+  }
+
   //   const [ participantName, setParticipantName ] = useState('')
-  const [startDate, setStartDate] = useState(0)
-  const [endDate, setEndDate] = useState(0)
-  const [dayOfWeek, setDayOfWeek] = useState([0, 0, 0, 0, 0, 0, 0])
-  const [checksVisibility, setChecksVisibility] = useState([0, 0, 0, 0, 0, 0, 0])
-  console.log("promptadddate rendering", dayOfWeek, "visibility", checksVisibility)
+  const [startDate, setStartDate] = useState(start)
+  const [endDate, setEndDate] = useState(end)
+  const [dayOfWeek, setDayOfWeek] = useState(dOW)
+  const [checksVisibility, setChecksVisibility] = useState(visibility)
+
+  //https://app.mindmup.com/map/new/1585247004727
+
+
 
   return (
     <>
@@ -73,6 +92,7 @@ export function PromptAddDate(props) {
                   <Form.Check
                     type="checkbox"
                     label={item}
+                    checked={(dayOfWeek[index] > 0 ? true : false)}
                     onChange={(e) => {
                       if (!e.target.checked) setDayOfWeek(toggleArrayIndexValue(dayOfWeek, index, PERIOD_OF_THE_DAY_BOTH, false))
                       setChecksVisibility(toggleArrayIndexValue(checksVisibility, index, 1, e.target.checked))
@@ -85,6 +105,7 @@ export function PromptAddDate(props) {
                       <Form.Check
                         type='checkbox'
                         label="manhã"
+                        checked={(dayOfWeek[index] & PERIOD_OF_THE_DAY_MORNING ? true : false)}
                         // key={(index + 1) * 2}
                         onChange={(e) => {
                           setDayOfWeek(toggleArrayIndexValue(dayOfWeek, index, PERIOD_OF_THE_DAY_MORNING, e.target.checked))
@@ -95,6 +116,7 @@ export function PromptAddDate(props) {
                       <Form.Check
                         type='checkbox'
                         label="tarde"
+                        checked={(dayOfWeek[index] & PERIOD_OF_THE_DAY_AFTERNOON ? true : false)}
                         // key={(index + 1) * 3}
                         onChange={(e) => {
                           setDayOfWeek(toggleArrayIndexValue(dayOfWeek, index, PERIOD_OF_THE_DAY_AFTERNOON, e.target.checked))
