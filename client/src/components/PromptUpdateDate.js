@@ -95,7 +95,8 @@ export function PromptUpdateDate() {
                       if (!e.target.checked) setDayOfWeek(toggleArrayIndexValue(dayOfWeek, index, PERIOD_OF_THE_DAY_BOTH, false))
                       setChecksVisibility(toggleArrayIndexValue(checksVisibility, index, 1, e.target.checked))
                     }}
-                  />
+                  >
+                  </Form.Check>
                 </Col>
                 {(checksVisibility[index]) ? (
                   <>
@@ -115,7 +116,6 @@ export function PromptUpdateDate() {
                         type='checkbox'
                         label="tarde"
                         checked={(dayOfWeek[index] & PERIOD_OF_THE_DAY_AFTERNOON ? true : false)}
-                        // key={(index + 1) * 3}
                         onChange={(e) => {
                           setDayOfWeek(toggleArrayIndexValue(dayOfWeek, index, PERIOD_OF_THE_DAY_AFTERNOON, e.target.checked))
                         }}
@@ -133,7 +133,7 @@ export function PromptUpdateDate() {
         <Button variant='primary'
           onClick={(e) => {
             
-            AddDate(
+            UpdateDate(
               { start: startDate, end: endDate, daysOfWeekAndPeriod: dayOfWeek },
               currentDates,
               currentId,
@@ -160,7 +160,7 @@ export function PromptUpdateDate() {
     dispatch: (função) do useDispatch()
     update: (boolean) dizendo se é atualização (true) ou novo registro (false)*/
 
-async function AddDate(newDates, prevDates, id, dispatch, update, indexToUpdate) {
+async function UpdateDate(newDates, prevDates, id, dispatch, update, indexToUpdate) {
   if (!newDates.start) {
     dispatch(setShowForm(SHOW_NAMES_AND_DATES_AND_CALENDAR))
 

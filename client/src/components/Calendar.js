@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { Fragment, useState, useRef } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table'
@@ -28,12 +28,14 @@ export function Calendar() {
   const { dbCollection } = useSelector(getParticipantsState)
   const [month, setMonth] = useState(0)
   // const [calendar, setCalendar] = useState([])
-  
+
   const inputYear = useRef(2020)
+  console.log(inputYear)
+  // inputYear.current.value = 2020
   const [year, setYear] = useState(inputYear.current)
 
   checkDates.setCollection(dbCollection)
-  
+
   const calendar = checkDates.Calendar(parseInt(month), parseInt(year))
 
   if (dbCollection.length === 0) return <></>
@@ -50,7 +52,7 @@ export function Calendar() {
           </Form.Control>
         </Col>
         <Col sm="2">
-          
+
           <Form.Control as='input' className="text-center" ref={inputYear} />
         </Col>
         <Col sm="2">
@@ -60,23 +62,23 @@ export function Calendar() {
       {/* </ButtonGroup> */}
       <div className="mt-4">
         <Table bordered={true} className="text-center">
-          <h5>{year}</h5>
+
           <thead className="   ">
             <tr>
-              {["D", "S", "T", "Q", "Q", "S", "S"].map((d) => <th colspan='2'>{d}</th>)}
+              {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => <th key={`w${i}`} colSpan='2'>{d}</th>)}
             </tr>
             <tr>
-              {Array(7).fill(["M", "T"]).flat().map((d) => <th>{d}</th>)}
+              {Array(7).fill(["M", "T"]).flat().map((d, i) => <th key={`mt${i}`}>{d}</th>)}
             </tr>
           </thead>
           <tbody>
-            {calendar.map((row) => {
+
+            {calendar.map((row, rowNumber) => {
               return (
-                <>
-                <tr>{row.map((dayArray, index) => <DayNumber key={index} dayArray={dayArray} />)}</tr>
-                  {/* <ShowDaysRow daysRow={row} /> */}
+                <Fragment key={rowNumber}>
+                  <tr>{row.map((dayArray, index) => <DayNumber key={index} dayArray={dayArray} />)}</tr>
                   <tr>{row.map((dayArray, index) => <DayOfCalendar key={index} dayArray={dayArray} />)}</tr>
-                </>
+                </Fragment>
               )
             })}
           </tbody>
@@ -87,8 +89,8 @@ export function Calendar() {
   )
 }
 export function DayNumber({ dayArray }) {
-  if (dayArray) return (<td colspan="2" className="text-white bg-primary p-0">{dayArray[0]}</td>)
-  else return <td colspan="2" className="p-0"></td>
+  if (dayArray) return (<td colSpan="2" className="text-white bg-primary p-0">{dayArray[0]}</td>)
+  else return <td colSpan="2" className="p-0"></td>
 }
 
 export function DayOfCalendar({ dayArray }) {
@@ -119,22 +121,16 @@ export function CellPeriodOfDay({ periodValue }) {
       </OverlayTrigger>
     )
   }
-  else {
-    return (
-      <td style={bgColor(periodValue[0])}>
-        {periodValue[0]}
-      </td>
-    )
-  }
+  else return <td style={bgColor(periodValue[0])}>{periodValue[0]}</td> 
 }
 
 function bgColor(points) {
   const maxpoints = 8
-  if (points === 0) return { "background-color": "#BBFFBB" }
+  if (points === 0) return { "backgroundColor": "#BBFFBB" }
   if (points > maxpoints) points = maxpoints
   points = maxpoints - points
   var gb = 25 * points
 
-  var css = { "background-color": `rgb(255, ${gb}, ${gb})` }
+  var css = { "backgroundColor": `rgb(255, ${gb}, ${gb})` }
   return css
 }

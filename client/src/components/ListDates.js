@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -49,18 +49,17 @@ export function ListDates({ setDateIndex }) {
         (dates.length > 0) ? (
           dates.map((item, index) => {
             return (
-
               <ListGroup.Item className="d-flex justify-content-between align-items-center" key={index} >
                 Período: {convertDate(item.start)} a {convertDate(item.end)}
                 {item.daysOfWeekAndPeriod.map((period, day) => {
                   if (period) {
                     return (
-                      <>
+                      <Fragment key={day}>
                         <br />- {DAY_OF_WEEK[day]} de {PERIOD_OF_THE_DAY[period]}
-                      </>
+                      </Fragment>
                     )
                   }
-                  return <></>
+                  return null
                 })}
 
                 {/* if */ (showForm & SHOW_REMOVE_DATES_PROMPT) ? (
