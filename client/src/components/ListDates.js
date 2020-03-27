@@ -6,9 +6,9 @@ import Badge from 'react-bootstrap/Badge';
 
 import {
   SHOW_NAMES_AND_DATES_AND_CALENDAR,
-  SHOW_NAMES_AND_ADD_DATES_PROMPT,
-  SHOW_NAMES_AND_EDIT_DATES_PROMPT,
-  SHOW_NAMES_AND_REMOVE_DATES_PROMPT,
+  SHOW_NAMES_AND_ADD_DATES,
+  SHOW_NAMES_AND_EDIT_DATES,
+  SHOW_NAMES_AND_REMOVE_DATES,
   SHOW_REMOVE_DATES_PROMPT,
   DAY_OF_WEEK,
   PERIOD_OF_THE_DAY
@@ -72,25 +72,17 @@ export function ListDates({ setDateIndex }) {
                   )
                 ) : ( //else
                     <div>
-                      <Badge
-                        pill
-                        variant="success"
-                        as="a"
-                        href="#"
+                      <Badge pill variant="success" as="a" href="#"
                         onClick={() => {
-                          dispatch(setShowForm(SHOW_NAMES_AND_EDIT_DATES_PROMPT))
+                          dispatch(setShowForm(SHOW_NAMES_AND_EDIT_DATES))
                           dispatch(setEditDateIndex(index))
                         }}
                       >
                         editar  
                         </Badge>                      
-                      <Badge
-                        pill
-                        variant="danger"
-                        as="a"
-                        href="#"
+                      <Badge pill variant="danger" as="a" href="#"
                         onClick={() => {
-                          dispatch(setShowForm(SHOW_NAMES_AND_REMOVE_DATES_PROMPT))
+                          dispatch(setShowForm(SHOW_NAMES_AND_REMOVE_DATES))
                           setDelIndex(index)
                         }}
                       >
@@ -110,7 +102,7 @@ export function ListDates({ setDateIndex }) {
       }
 
       <ButtonGroup size="sm" className="w-100 mt-2">
-        <Button variant='success' onClick={() => dispatch(setShowForm(SHOW_NAMES_AND_ADD_DATES_PROMPT))}>Adicionar período</Button>
+        <Button variant='success' onClick={() => dispatch(setShowForm(SHOW_NAMES_AND_ADD_DATES))}>Adicionar período</Button>
       </ButtonGroup>
     </ListGroup>
   )

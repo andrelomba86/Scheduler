@@ -23,8 +23,7 @@ import {
 import {
   setShowForm,
   submitUpdate,
-  getParticipantsState,
-  editDateIndex
+  getParticipantsState
 } from './redux/participantsSlice';
 
 
@@ -32,30 +31,29 @@ import {
   PromptAddParticipant()  
 */
 
-export function PromptAddDate() {
+export function PromptUpdateDate() {
   const dispatch = useDispatch()
   const { dbCollection, currentId, editDateIndex, showForm } = useSelector(getParticipantsState)
   var currentDates = dbCollection.find((item) => item._id === currentId).dates
 
-  var start = 0
-  var end = 0
-  var dOW = [0, 0, 0, 0, 0, 0, 0]
-  var visibility = [0, 0, 0, 0, 0, 0, 0]
+  var preStartDate = 0
+  var preEndDate = 0
+  var preDaysOfWeek = [0, 0, 0, 0, 0, 0, 0]
+  var preVisibility = [0, 0, 0, 0, 0, 0, 0]
 
   if (showForm & SHOW_EDIT_DATES_PROMPT) {
     var editDates = currentDates[editDateIndex]
-    start = new Date(editDates.start)
-    end = new Date(editDates.end)
-    dOW = editDates.daysOfWeekAndPeriod
-    // visibility = [1, 1, 1, 1, 1, 1, 1]
-    console.log("currentdates edit", editDates)
+    preStartDate = new Date(editDates.start)
+    preEndDate = new Date(editDates.end)
+    preDaysOfWeek = editDates.daysOfWeekAndPeriod    
+    preDaysOfWeek.forEach((value, index) => {(value > 0) && (preVisibility[index] = 1)})
   }
 
   //   const [ participantName, setParticipantName ] = useState('')
-  const [startDate, setStartDate] = useState(start)
-  const [endDate, setEndDate] = useState(end)
-  const [dayOfWeek, setDayOfWeek] = useState(dOW)
-  const [checksVisibility, setChecksVisibility] = useState(visibility)
+  const [startDate, setStartDate] = useState(preStartDate)
+  const [endDate, setEndDate] = useState(preEndDate)
+  const [dayOfWeek, setDayOfWeek] = useState(preDaysOfWeek)
+  const [checksVisibility, setChecksVisibility] = useState(preVisibility)
 
   //https://app.mindmup.com/map/new/1585247004727
 
@@ -92,7 +90,7 @@ export function PromptAddDate() {
                   <Form.Check
                     type="checkbox"
                     label={item}
-                    checked={(dayOfWeek[index] > 0 ? true : false)}
+                    checked={(checksVisibility[index] > 0 ? true : false)}
                     onChange={(e) => {
                       if (!e.target.checked) setDayOfWeek(toggleArrayIndexValue(dayOfWeek, index, PERIOD_OF_THE_DAY_BOTH, false))
                       setChecksVisibility(toggleArrayIndexValue(checksVisibility, index, 1, e.target.checked))
@@ -134,11 +132,14 @@ export function PromptAddDate() {
       <ButtonGroup className="w-100 mt-1">
         <Button variant='primary'
           onClick={(e) => {
+            
             AddDate(
               { start: startDate, end: endDate, daysOfWeekAndPeriod: dayOfWeek },
               currentDates,
               currentId,
-              dispatch
+              dispatch,
+              (showForm & SHOW_EDIT_DATES_PROMPT ? true : false),
+              editDateIndex
             )
           }}
         >
@@ -151,7 +152,15 @@ export function PromptAddDate() {
   )
 }
 
-async function AddDate(newDates, prevDates, id, dispatch) {
+/* function AddDate()
+    ------------------
+    newDates: (objeto) com as datas a adicionar ou atualizar
+    prevDates: (objeto) com todas as datas do participante ativo
+    id: id (string) do participante ativo
+    dispatch: (função) do useDispatch()
+    update: (boolean) dizendo se é atualização (true) ou novo registro (false)*/
+
+async function AddDate(newDates, prevDates, id, dispatch, update, indexToUpdate) {
   if (!newDates.start) {
     dispatch(setShowForm(SHOW_NAMES_AND_DATES_AND_CALENDAR))
 
@@ -161,10 +170,12 @@ async function AddDate(newDates, prevDates, id, dispatch) {
   }
   if (!newDates.end) { newDates.end = newDates.start }
 
-  const updatedDates = Array.from(prevDates)
-  updatedDates.push(newDates)
+  const prevDatesCopy = Array.from(prevDates)
 
-  dispatch(submitUpdate(id, { dates: updatedDates }))
+  if (update) prevDatesCopy[indexToUpdate] = newDates 
+  else prevDatesCopy.push(newDates)
+
+  dispatch(submitUpdate(id, { dates: prevDatesCopy }))
 }
 
 function toggleArrayIndexValue(array, index, value, enable) {

@@ -35,10 +35,10 @@ function App() {
 
       <Form>
         <Form.Row>
-          <Form.Group className="col-md-5 m-2">
+          <Form.Group className="col-md-5 m-4">
             <Participants />
           </Form.Group>
-          <Form.Group className="col-md m-2">
+          <Form.Group className="col-md  m-4">
             {(showForm & SHOW_CALENDAR) ? <Calendar /> : null}
           </Form.Group>
         </Form.Row>

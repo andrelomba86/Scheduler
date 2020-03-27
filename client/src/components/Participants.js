@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import { PromptAddParticipant, PromptRemoveParticipant } from './ParticipantsPrompts'
-import { PromptAddDate } from './PromptAddDate'
+import { PromptUpdateDate } from './PromptUpdateDate'
 import { ListDates } from './ListDates'
 
 import {
@@ -11,8 +11,10 @@ import {
   SHOW_DATES,
   SHOW_ADD_PARTICIPANT_PROMPT,
   SHOW_REMOVE_PARTICIPANT_PROMPT,
+  SHOW_ADD_PARTICIPANT_AND_CALENDAR,
+  SHOW_REMOVE_PARTICIPANT_AND_CALENDAR,
   SHOW_ADD_DATES_PROMPT,
-  SHOW_EDIT_DATES_PROMPT,
+  SHOW_EDIT_DATES_PROMPT  
 } from "../Consts.js"
 
 import {
@@ -45,7 +47,7 @@ export function Participants() {
       {(showForm & SHOW_ADD_PARTICIPANT_PROMPT ) ? (<PromptAddParticipant />) : null}
       {(showForm & SHOW_REMOVE_PARTICIPANT_PROMPT) ? (<PromptRemoveParticipant />) : null}
       {(showForm & SHOW_DATES) ? <ListDates /> : null}
-      {(showForm & SHOW_ADD_DATES_PROMPT || showForm & SHOW_EDIT_DATES_PROMPT) ? (<PromptAddDate />) : null}
+      {(showForm & SHOW_ADD_DATES_PROMPT || showForm & SHOW_EDIT_DATES_PROMPT) ? (<PromptUpdateDate />) : null}
     </>
   );
 }
@@ -73,8 +75,8 @@ export function ListParticipantsNames(props) {
         })}
       </Form.Control>
       <ButtonGroup className="w-100 mt-1">
-        <Button variant='outline-primary' onClick={() => dispatch(setShowForm(SHOW_ADD_PARTICIPANT_PROMPT))}>Adicionar</Button>
-        <Button variant='outline-primary' onClick={() => dispatch(setShowForm(SHOW_REMOVE_PARTICIPANT_PROMPT))}>Remover</Button>
+        <Button variant='outline-primary' onClick={() => dispatch(setShowForm(SHOW_ADD_PARTICIPANT_AND_CALENDAR))}>Adicionar</Button>
+        <Button variant='outline-primary' onClick={() => dispatch(setShowForm(SHOW_REMOVE_PARTICIPANT_AND_CALENDAR))}>Remover</Button>
         {/* <Button variant='outline-primary'>Editar</Button> */}
       </ButtonGroup>
 

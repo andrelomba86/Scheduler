@@ -108,17 +108,3 @@ export function DatesChecker() {
     Calendar
   }
 }
-
-// module.exports = createNewDateAvailability;
-
-
-// function MonthCheck(month, year) {
-
-  // var result = []
-  // for (var i = 0; i < new Date(2020, month + 1, 0).getDate(); i++) {
-    // const day = i + 1
-
-    // result[day] = DateAvailabilityPoints(new Date(year, month, day))
-  // }
-  // return result
-// }
