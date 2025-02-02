@@ -10,7 +10,6 @@ import {
   submitAddNewParticipant,
   submitRemoveParticipant,
   setShowForm,
-  // getParticipantsState
 } from './redux/participantsSlice'
 
 /*

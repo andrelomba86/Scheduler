@@ -1,4 +1,4 @@
-import Datastore from 'nedb'
+import Datastore from '@seald-io/nedb'
 import express from 'express'
 
 const port = process.env.PORT || 5000

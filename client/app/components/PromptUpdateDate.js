@@ -14,11 +14,13 @@ import {
   PERIOD_OF_THE_DAY_MORNING,
   PERIOD_OF_THE_DAY_AFTERNOON,
   PERIOD_OF_THE_DAY_BOTH,
+  changeBitValueInArrayIndex,
 } from '../Consts'
 
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setShowForm, submitUpdate, getParticipantsState } from './redux/participantsSlice'
+import { getSemesterDates } from './MenuBar.js'
 
 // Custom hook to handle form state initialization
 function useFormState(showForm, currentDates, editDateIndex) {
@@ -49,6 +51,7 @@ function useFormState(showForm, currentDates, editDateIndex) {
   }
 }
 
+// Component to render the prompt for updating dates
 export function PromptUpdateDate() {
   const dispatch = useDispatch()
   const { dbCollection, currentId, editDateIndex, showForm } = useSelector(getParticipantsState)
@@ -64,9 +67,11 @@ export function PromptUpdateDate() {
     checksVisibility,
     setChecksVisibility,
   } = useFormState(showForm, currentDates, editDateIndex)
+  const semesters = getSemesterDates()
 
   return (
     <>
+      {/* Render date pickers for start and end dates */}
       <Row className="mt-4 mb-2">
         <Col>
           <Form.Label>Data de início:</Form.Label>
@@ -87,28 +92,30 @@ export function PromptUpdateDate() {
           />
         </Col>
       </Row>
+      {/* Render buttons for selecting semester dates */}
       <Row className="m-4">
         <Col>
           <ButtonGroup className="w-100" size="sm">
             <Button
               variant="outline-primary"
               onClick={() => {
-                setStartDate(new Date(new Date().getFullYear(), 0, 1))
-                setEndDate(new Date(new Date().getFullYear(), 5, 30))
+                setStartDate(new Date(semesters.firstSemester.inicio))
+                setEndDate(new Date(semesters.firstSemester.fim))
               }}>
               1º semestre
             </Button>
             <Button
               variant="outline-primary"
               onClick={() => {
-                setStartDate(new Date(new Date().getFullYear(), 6, 1))
-                setEndDate(new Date(new Date().getFullYear(), 11, 31))
+                setStartDate(new Date(semesters.secondSemester.inicio))
+                setEndDate(new Date(semesters.secondSemester.fim))
               }}>
               2º semestre
             </Button>
           </ButtonGroup>
         </Col>
       </Row>
+      {/* Render checkboxes for selecting days of the week and periods */}
       <Form.Group controlId="formBasicCheckbox">
         {DAY_OF_WEEK.map((item, index) => {
           return (
@@ -120,8 +127,12 @@ export function PromptUpdateDate() {
                   checked={checksVisibility[index] > 0 ? true : false}
                   onChange={e => {
                     if (!e.target.checked)
-                      setDayOfWeek(toggleArrayIndexValue(dayOfWeek, index, PERIOD_OF_THE_DAY_BOTH, false))
-                    setChecksVisibility(toggleArrayIndexValue(checksVisibility, index, 1, e.target.checked))
+                      setDayOfWeek(
+                        changeBitValueInArrayIndex(dayOfWeek, index, PERIOD_OF_THE_DAY_BOTH, false)
+                      )
+                    setChecksVisibility(
+                      changeBitValueInArrayIndex(checksVisibility, index, 1, e.target.checked)
+                    )
                   }}></Form.Check>
               </Col>
               {checksVisibility[index] ? (
@@ -131,10 +142,14 @@ export function PromptUpdateDate() {
                       type="checkbox"
                       label="manhã"
                       checked={dayOfWeek[index] & PERIOD_OF_THE_DAY_MORNING ? true : false}
-                      // key={(index + 1) * 2}
                       onChange={e => {
                         setDayOfWeek(
-                          toggleArrayIndexValue(dayOfWeek, index, PERIOD_OF_THE_DAY_MORNING, e.target.checked)
+                          changeBitValueInArrayIndex(
+                            dayOfWeek,
+                            index,
+                            PERIOD_OF_THE_DAY_MORNING,
+                            e.target.checked
+                          )
                         )
                       }}
                     />
@@ -146,7 +161,7 @@ export function PromptUpdateDate() {
                       checked={dayOfWeek[index] & PERIOD_OF_THE_DAY_AFTERNOON ? true : false}
                       onChange={e => {
                         setDayOfWeek(
-                          toggleArrayIndexValue(
+                          changeBitValueInArrayIndex(
                             dayOfWeek,
                             index,
                             PERIOD_OF_THE_DAY_AFTERNOON,
@@ -162,6 +177,7 @@ export function PromptUpdateDate() {
           )
         })}
       </Form.Group>
+      {/* Render buttons for submitting or canceling the update */}
       <ButtonGroup className="w-100 mt-1">
         <Button
           variant="primary"
@@ -186,14 +202,13 @@ export function PromptUpdateDate() {
   )
 }
 
-/* function AddDate()
+/* function UpdateDate()
     ------------------
     newDates: (objeto) com as datas a adicionar ou atualizar
     prevDates: (objeto) com todas as datas do participante ativo
     id: id (string) do participante ativo
     dispatch: (função) do useDispatch()
     update: (boolean) dizendo se é atualização (true) ou novo registro (false)*/
-
 async function UpdateDate(newDates, prevDates = {}, id, dispatch, update, indexToUpdate) {
   if (!newDates.start) {
     dispatch(setShowForm(SHOW_NAMES_AND_DATES_AND_CALENDAR))
@@ -212,11 +227,4 @@ async function UpdateDate(newDates, prevDates = {}, id, dispatch, update, indexT
   else prevDatesCopy.push(newDates)
 
   dispatch(submitUpdate(id, { dates: prevDatesCopy }))
-}
-
-function toggleArrayIndexValue(array, index, value, enable) {
-  var newArray = Array.from(array)
-  if (enable) newArray[index] = array[index] | value
-  else newArray[index] = array[index] & ~value
-  return newArray
 }
