@@ -77,7 +77,8 @@ export function getSemesterDates() {
     },
   }
 
-  const semesters = JSON.parse(localStorage.getItem('semesters')) || defaultSemesters
+  // const semesters = JSON.parse(localStorage.getItem('semesters')) || defaultSemesters
+  const semesters = defaultSemesters
 
   return semesters
 }

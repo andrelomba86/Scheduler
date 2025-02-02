@@ -1,6 +1,9 @@
 import fs from 'fs'
 import path from 'path'
 import csv from 'csv-parser'
+
+import axios from 'axios'
+
 import {
   SHOW_NAMES_AND_DATES_AND_CALENDAR,
   SHOW_EDIT_DATES_PROMPT,
@@ -33,13 +36,15 @@ async function getProfessorSchedule() {
     for await (const row of dataStream) {
       const professors = row['Docente(s)']
       const schedule = row['Horário']
-      const semesterNum = row['Cursos - Ano/Sem. - Prioridade'].split(' - ')[1].split('/')[1]
-      console.log(professors, semesterNum, schedule)
+      const semesterNum = row['Cursos - Ano/Sem. - Prioridade'].match(/\d\/(\d)/)?.[1]
+      if (!semesterNum) {
+        console.error(row, '\n[ERRO]: a disciplina não contém indicação de semestre.')
+        process.exit()
+      }
+
       let representante
       for (representante of representantes) {
         if (professors.includes(representante)) {
-          if (!semesterNum) console.log('ERRO: sem número de semestre\n\n', row)
-
           const semester = semesterNum === '1' ? 'firstSemester' : 'secondSemester'
 
           let daysOfWeekAndPeriod = professorSchedule[representante]?.semester || Array(7).fill(0)
@@ -73,7 +78,7 @@ async function getProfessorSchedule() {
 }
 
 // Função para exibir os semestres e perguntar ao usuário se quer continuar
-async function displaySemestersAndContinue() {
+async function init() {
   console.log('Semestres disponíveis:')
   console.log(
     `1º Semestre: ${dates.firstSemester.start.toLocaleDateString()} - ${dates.firstSemester.end.toLocaleDateString()}`
@@ -88,7 +93,8 @@ async function displaySemestersAndContinue() {
     const answer = data.toString().trim().toLowerCase()
     if (answer === 's') {
       getProfessorSchedule().then(async result => {
-        console.log(JSON.stringify(result, null, 2))
+        // console.log(JSON.stringify(result, null, 2))
+        await doTheUpdates(result)
         process.exit()
       })
     } else {
@@ -98,5 +104,51 @@ async function displaySemestersAndContinue() {
   })
 }
 
-// Usage example:
-displaySemestersAndContinue()
+axios.defaults.baseURL = 'http://localhost:5000'
+
+async function doTheUpdates(result) {
+  // console.log(result)
+  for (let professor of Object.keys(result)) {
+    // console.log(professor)
+    let response = await axios.post('/search', { name: professor })
+    console.log(response.data, '\nlength', response.data.length)
+    let id
+    let dates = []
+    if (!response.data.length) {
+      try {
+        console.log('Adicionando professor', professor)
+        const addResponse = await axios.post('/add', { name: professor })
+        id = addResponse.data.doc._id
+        console.log('Professor adicionado:', professor)
+      } catch (err) {
+        console.log(err)
+      }
+    } else {
+      if ((response.data.length = 1)) {
+        id = response.data[0]._id
+        dates = response.data[0].dates || []
+      } else {
+        console.log(response.data, '\n[ERRO]: resultado retornou vários professores')
+      }
+    }
+
+    // console.log('Atualizando professor', professor)
+    try {
+      if (result[professor]['firstSemester']) {
+        dates.push(result[professor]['firstSemester'])
+      }
+      if (result[professor]['secondSemester']) {
+        dates.push(result[professor]['secondSemester'])
+      }
+      console.log('ID', id, 'data', { dates })
+      const updateResponse = await axios.post('/update', { id, values: { dates } })
+      // console.log('submitUpdate result', updateResponse.data)
+      if (!updateResponse.data.result) throw Error(updateResponse.data.error.message)
+    } catch (err) {
+      console.log('ERRO', err)
+      process.exit()
+    }
+  }
+}
+
+init()

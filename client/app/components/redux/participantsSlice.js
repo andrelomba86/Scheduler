@@ -45,14 +45,9 @@ export function updateDBCollection(currentId = '') {
   return async dispatch => {
     try {
       dispatch(setIsLoading(true))
-      console.log('updateDBCollection() - after dispatch')
       const response = await axios.get('/get')
-      console.log('updateDBCollection() - after axios.get()')
       if (response.data.error) throw Error(response.data.error.message)
-      console.log('updconsole.log("updateDBCollection() - after response.data.error')
       dispatch(setDBCollection({ collection: response.data.collection, currentId: currentId }))
-      // if (response.data.collection.length > 0) dispatch(setDBCollection({ collection: response.data.collection, currentId: currentId}))
-      // if (response.data.collection.length > 0) dispatch(setDBCollection({ collection: response.data.collection }))
     } catch (err) {
       console.log('participantsSlice.updateDBCollection()', err)
     }
@@ -93,6 +88,7 @@ export function submitUpdate(id, data) {
 
     try {
       dispatch(setIsLoading(true))
+      console.log(data)
       const response = await axios.post('/update', { id: id, values: data })
       console.log('submitUpdate result', response.data.result)
       if (response.data.result) dispatch(updateDBCollection(id))

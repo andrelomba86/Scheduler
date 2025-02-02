@@ -27,9 +27,11 @@ app.post('/update', (req, res) => {
   try {
     var id = req.body.id
     var values = req.body.values
+
+    console.log('ID:', id, 'values', values)
     if (id) {
       db.update({ _id: id }, { $set: values }, {}, (err, numReplaced) => {
-        if (err) res.json({ result: false, error: err })
+        if (err) res.json({ result: false, error: err, numReplaced })
         else res.json({ result: true, numReplaced: numReplaced })
       })
     } else throw Error('ERROR: ID para exclusão não informado')
@@ -59,7 +61,7 @@ app.post('/add', (req, res) => {
     console.log(req.body)
     var name = req.body.name
     if (name) {
-      db.insert({ name: name, test: 'kxklkas', n: 1 }, (err, newDoc) => {
+      db.insert({ name: name }, (err, newDoc) => {
         if (err) res.json({ result: false, error: err, newDoc })
         else res.json({ result: true, doc: newDoc })
       })
@@ -78,6 +80,22 @@ app.get('/get', (req, res) => {
     }
     res.json({ collection: docs })
   })
+})
+
+// Middleware para pesquisar por nome
+app.post('/search', (req, res) => {
+  const { name } = req.body
+  if (name) {
+    db.find({ name: new RegExp(name, 'i') }, (err, docs) => {
+      if (err) {
+        res.json({ error: err })
+      } else {
+        res.json(docs)
+      }
+    })
+  } else {
+    res.json({ error: 'Nome não fornecido' })
+  }
 })
 
 app.listen(port, () => console.log(`Express - Listening on port ${port}`))
