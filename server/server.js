@@ -58,7 +58,6 @@ app.post('/del', (req, res) => {
 app.post('/add', (req, res) => {
   console.log('POST /add')
   try {
-    console.log(req.body)
     var name = req.body.name
     if (name) {
       db.insert({ name: name }, (err, newDoc) => {

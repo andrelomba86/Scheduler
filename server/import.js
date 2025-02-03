@@ -47,18 +47,27 @@ async function getProfessorSchedule() {
         if (professors.includes(representante)) {
           const semester = semesterNum === '1' ? 'firstSemester' : 'secondSemester'
 
-          let daysOfWeekAndPeriod = professorSchedule[representante]?.semester || Array(7).fill(0)
+          let daysOfWeekAndPeriod =
+            professorSchedule[representante]?.[semester]?.daysOfWeekAndPeriod || Array(7).fill(0)
 
           //!-- Adiciona os periodos de aula de cada dia da semana
-          const regex = /([\wç]+): (\d{2}):(\d{2})-(\d{2}):(\d{2})/g
+          const regex = /([\wçá]+): (\d{2}):(\d{2})-(\d{2}):(\d{2})/g
           let match
 
           while ((match = regex.exec(schedule)) !== null) {
             const [_, day, startTime, __, endTime, ___] = match
 
-            const period = endTime <= 13 ? PERIOD_OF_THE_DAY_MORNING : PERIOD_OF_THE_DAY_AFTERNOON
             const dayIndex = DAY_OF_WEEK_NUM[day]
-            daysOfWeekAndPeriod = changeBitValueInArrayIndex(daysOfWeekAndPeriod, dayIndex, period, true)
+            let period
+            if (endTime <= 12) {
+              period = PERIOD_OF_THE_DAY_MORNING
+            } else if (endTime <= 18) {
+              period = PERIOD_OF_THE_DAY_AFTERNOON
+            } else {
+              continue
+            }
+
+            daysOfWeekAndPeriod = [...changeBitValueInArrayIndex(daysOfWeekAndPeriod, dayIndex, period, true)]
           }
 
           const scheduleObject = { ...dates[semester], daysOfWeekAndPeriod }
@@ -111,12 +120,10 @@ async function doTheUpdates(result) {
   for (let professor of Object.keys(result)) {
     // console.log(professor)
     let response = await axios.post('/search', { name: professor })
-    console.log(response.data, '\nlength', response.data.length)
     let id
     let dates = []
     if (!response.data.length) {
       try {
-        console.log('Adicionando professor', professor)
         const addResponse = await axios.post('/add', { name: professor })
         id = addResponse.data.doc._id
         console.log('Professor adicionado:', professor)
@@ -140,7 +147,6 @@ async function doTheUpdates(result) {
       if (result[professor]['secondSemester']) {
         dates.push(result[professor]['secondSemester'])
       }
-      console.log('ID', id, 'data', { dates })
       const updateResponse = await axios.post('/update', { id, values: { dates } })
       // console.log('submitUpdate result', updateResponse.data)
       if (!updateResponse.data.result) throw Error(updateResponse.data.error.message)
