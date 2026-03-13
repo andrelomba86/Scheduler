@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { SHOW_NAMES_AND_DATES_AND_CALENDAR } from '../../Consts'
+import { MOSTRAR_NOMES_DATAS_E_CALENDARIO } from '../../Consts'
 
 axios.defaults.baseURL = 'http://localhost:5000'
 
@@ -11,7 +11,7 @@ export const slice = createSlice({
     currentId: '',
     editDateIndex: -1,
     dbCollection: [],
-    showForm: SHOW_NAMES_AND_DATES_AND_CALENDAR,
+    showForm: MOSTRAR_NOMES_DATAS_E_CALENDARIO,
   },
   reducers: {
     setCurrentId: (state, action) => {
@@ -25,7 +25,7 @@ export const slice = createSlice({
 
       state.dbCollection = collection
       state.isLoading = false
-      state.showForm = SHOW_NAMES_AND_DATES_AND_CALENDAR
+      state.showForm = MOSTRAR_NOMES_DATAS_E_CALENDARIO
     },
     setIsLoading(state, action) {
       state.isLoading = action.payload
@@ -62,7 +62,7 @@ export function submitAddNewParticipant(name) {
       if (response.data.result) dispatch(updateDBCollection(response.data.doc._id))
       else throw Error(response.data.error)
     } catch (err) {
-      dispatch(setShowForm(SHOW_NAMES_AND_DATES_AND_CALENDAR))
+      dispatch(setShowForm(MOSTRAR_NOMES_DATAS_E_CALENDARIO))
       dispatch(setIsLoading(false))
     }
   }
@@ -76,7 +76,7 @@ export function submitRemoveParticipant(id) {
       if (response.data.result) dispatch(updateDBCollection())
       else throw Error(response.data.error)
     } catch (err) {
-      dispatch(setShowForm(SHOW_NAMES_AND_DATES_AND_CALENDAR))
+      dispatch(setShowForm(MOSTRAR_NOMES_DATAS_E_CALENDARIO))
       dispatch(setIsLoading(false))
     }
   }
@@ -88,14 +88,13 @@ export function submitUpdate(id, data) {
 
     try {
       dispatch(setIsLoading(true))
-      console.log(data)
-      const response = await axios.post('/update', { id: id, values: data })
+      const response = await axios.post('/update', { id, values: data })
       console.log('submitUpdate result', response.data.result)
       if (response.data.result) dispatch(updateDBCollection(id))
       else throw Error(response.data.error.message)
     } catch (err) {
       console.log('ERRO', err)
-      dispatch(setShowForm(SHOW_NAMES_AND_DATES_AND_CALENDAR))
+      dispatch(setShowForm(MOSTRAR_NOMES_DATAS_E_CALENDARIO))
       dispatch(setIsLoading(false))
     }
   }

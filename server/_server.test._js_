@@ -1,0 +1,51 @@
+import express from 'express'
+import Datastore from '@seald-io/nedb'
+import request from 'supertest'
+import { jest } from '@jest/globals'
+
+jest.mock('@seald-io/nedb')
+/**
+ * Mocks the 'node:child_process' module for testing purposes.
+ *
+ * This function uses Jest's unstable_mockModule to mock the 'node:child_process' module.
+ * It replaces the 'execSync' function with a Jest mock function.
+ *
+ * @returns {Object} An object containing the mocked 'execSync' function.
+ */
+jest.unstable_mockModule('node:child_process', () => ({
+  execSync: jest.fn(),
+}))
+
+const { execSync } = await import('node:child_process')
+
+describe('POST /config', () => {
+  let app
+  let mockConfigDb
+
+  beforeEach(() => {
+    app = express()
+    app.use(express.json())
+
+    require('./server')
+  })
+
+  it('should handle empty request body correctly', async () => {
+    const response = await request(app).post('/config').send({})
+
+    expect(response.status).toBe(400)
+    expect(response.body).toEqual({ error: 'Chave não fornecida' })
+  })
+
+  it('should return 200 status and the found document when a valid key is provided', async () => {
+    const mockDoc = { _id: 'validKey', value: 'testValue' }
+    mockConfigDb.findOne.mockImplementationOnce((query, callback) => {
+      callback(null, mockDoc)
+    })
+
+    const response = await request(app).post('/config').send({ key: 'validKey' })
+
+    expect(response.status).toBe(200)
+    expect(response.body).toEqual(mockDoc)
+    expect(mockConfigDb.findOne).toHaveBeenCalledWith({ _id: 'validKey' }, expect.any(Function))
+  })
+})

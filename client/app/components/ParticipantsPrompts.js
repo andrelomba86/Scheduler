@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
-import { SHOW_NAMES_AND_DATES_AND_CALENDAR } from '../Consts.js'
+import { MOSTRAR_NOMES_DATAS_E_CALENDARIO } from '../Consts.js'
 
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -34,7 +34,7 @@ export function PromptAddParticipant(props) {
         <Button variant="primary" onClick={e => AddNewParticipant(participantName, dispatch)}>
           Ok
         </Button>
-        <Button variant="danger" onClick={() => dispatch(setShowForm(SHOW_NAMES_AND_DATES_AND_CALENDAR))}>
+        <Button variant="danger" onClick={() => dispatch(setShowForm(MOSTRAR_NOMES_DATAS_E_CALENDARIO))}>
           Cancelar
         </Button>
       </ButtonGroup>
@@ -70,7 +70,7 @@ export function PromptRemoveParticipant(props) {
         <Button variant="primary" onClick={e => RemoveParticipant(currentId, dispatch)}>
           Ok
         </Button>
-        <Button variant="danger" onClick={() => dispatch(setShowForm(SHOW_NAMES_AND_DATES_AND_CALENDAR))}>
+        <Button variant="danger" onClick={() => dispatch(setShowForm(MOSTRAR_NOMES_DATAS_E_CALENDARIO))}>
           Cancelar
         </Button>
       </ButtonGroup>

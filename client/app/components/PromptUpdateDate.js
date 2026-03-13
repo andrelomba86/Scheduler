@@ -8,12 +8,12 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
 import {
-  SHOW_NAMES_AND_DATES_AND_CALENDAR,
-  SHOW_EDIT_DATES_PROMPT,
-  DAY_OF_WEEK,
-  PERIOD_OF_THE_DAY_MORNING,
-  PERIOD_OF_THE_DAY_AFTERNOON,
-  PERIOD_OF_THE_DAY_BOTH,
+  MOSTRAR_NOMES_DATAS_E_CALENDARIO,
+  MOSTRAR_EDITAR_DATAS,
+  DIA_DA_SEMANA,
+  PERIODO_DO_DIA_MANHA,
+  PERIODO_DO_DIA_NOITE,
+  PERIODO_DO_DIA_AMBOS,
   changeBitValueInArrayIndex,
 } from '../Consts'
 
@@ -30,7 +30,7 @@ function useFormState(showForm, currentDates, editDateIndex) {
   const [checksVisibility, setChecksVisibility] = useState([0, 0, 0, 0, 0, 0, 0])
 
   useEffect(() => {
-    if (showForm & SHOW_EDIT_DATES_PROMPT) {
+    if (showForm & MOSTRAR_EDITAR_DATAS) {
       const editDates = currentDates[editDateIndex]
       setStartDate(new Date(editDates.start))
       setEndDate(new Date(editDates.end))
@@ -78,7 +78,10 @@ export function PromptUpdateDate() {
           <DatePicker
             className="form-control"
             selected={startDate}
-            onChange={date => setStartDate(date)}
+            onChange={date => {
+              console.log('SET DATE:', date)
+              setStartDate(date)
+            }}
             dateFormat="dd/MM/yyyy"
           />
         </Col>
@@ -117,7 +120,7 @@ export function PromptUpdateDate() {
       </Row>
       {/* Render checkboxes for selecting days of the week and periods */}
       <Form.Group controlId="formBasicCheckbox">
-        {DAY_OF_WEEK.map((item, index) => {
+        {DIA_DA_SEMANA.map((item, index) => {
           return (
             <Row key={index} value={index} className="mb-1 md-c-1">
               <Col>
@@ -127,11 +130,9 @@ export function PromptUpdateDate() {
                   checked={checksVisibility[index] > 0 ? true : false}
                   onChange={e => {
                     if (!e.target.checked)
-                      setDayOfWeek(
-                        changeBitValueInArrayIndex(dayOfWeek, index, PERIOD_OF_THE_DAY_BOTH, false)
-                      )
+                      setDayOfWeek(changeBitValueInArrayIndex(dayOfWeek, index, PERIODO_DO_DIA_AMBOS, false))
                     setChecksVisibility(
-                      changeBitValueInArrayIndex(checksVisibility, index, 1, e.target.checked)
+                      changeBitValueInArrayIndex(checksVisibility, index, 1, e.target.checked),
                     )
                   }}></Form.Check>
               </Col>
@@ -141,15 +142,15 @@ export function PromptUpdateDate() {
                     <Form.Check
                       type="checkbox"
                       label="manhã"
-                      checked={dayOfWeek[index] & PERIOD_OF_THE_DAY_MORNING ? true : false}
+                      checked={dayOfWeek[index] & PERIODO_DO_DIA_MANHA ? true : false}
                       onChange={e => {
                         setDayOfWeek(
                           changeBitValueInArrayIndex(
                             dayOfWeek,
                             index,
-                            PERIOD_OF_THE_DAY_MORNING,
-                            e.target.checked
-                          )
+                            PERIODO_DO_DIA_MANHA,
+                            e.target.checked,
+                          ),
                         )
                       }}
                     />
@@ -158,15 +159,15 @@ export function PromptUpdateDate() {
                     <Form.Check
                       type="checkbox"
                       label="tarde"
-                      checked={dayOfWeek[index] & PERIOD_OF_THE_DAY_AFTERNOON ? true : false}
+                      checked={dayOfWeek[index] & PERIODO_DO_DIA_NOITE ? true : false}
                       onChange={e => {
                         setDayOfWeek(
                           changeBitValueInArrayIndex(
                             dayOfWeek,
                             index,
-                            PERIOD_OF_THE_DAY_AFTERNOON,
-                            e.target.checked
-                          )
+                            PERIODO_DO_DIA_NOITE,
+                            e.target.checked,
+                          ),
                         )
                       }}
                     />
@@ -187,13 +188,13 @@ export function PromptUpdateDate() {
               currentDates,
               currentId,
               dispatch,
-              showForm & SHOW_EDIT_DATES_PROMPT,
-              editDateIndex
+              showForm & MOSTRAR_EDITAR_DATAS,
+              editDateIndex,
             )
           }}>
           Ok
         </Button>
-        <Button variant="danger" onClick={() => dispatch(setShowForm(SHOW_NAMES_AND_DATES_AND_CALENDAR))}>
+        <Button variant="danger" onClick={() => dispatch(setShowForm(MOSTRAR_NOMES_DATAS_E_CALENDARIO))}>
           Cancelar
         </Button>
       </ButtonGroup>
@@ -211,7 +212,7 @@ export function PromptUpdateDate() {
     update: (boolean) dizendo se é atualização (true) ou novo registro (false)*/
 async function UpdateDate(newDates, prevDates = {}, id, dispatch, update, indexToUpdate) {
   if (!newDates.start) {
-    dispatch(setShowForm(SHOW_NAMES_AND_DATES_AND_CALENDAR))
+    dispatch(setShowForm(MOSTRAR_NOMES_DATAS_E_CALENDARIO))
 
     /// ADICIONAR SHOW ALERT para adicionar data
 

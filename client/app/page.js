@@ -5,7 +5,7 @@ import { Representantes } from './components/Representantes'
 import { ClientWrapper } from './components/ClientWrapper'
 import { getParticipantsState } from './components/redux/participantsSlice'
 import { useSelector } from 'react-redux'
-import { SHOW_CALENDAR } from './Consts'
+import { MOSTRAR_CALENDARIO } from './Consts'
 import DatePicker from 'react-datepicker'
 
 import { Calendar } from './components/Calendar'

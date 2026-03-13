@@ -34,7 +34,7 @@ app.post('/update', (req, res) => {
         if (err) res.json({ result: false, error: err, numReplaced })
         else res.json({ result: true, numReplaced: numReplaced })
       })
-    } else throw Error('ERROR: ID para exclusão não informado')
+    } else throw Error('ERROR: ID para atualizar não informado')
   } catch (err) {
     res.json({ result: false, error: err })
   }

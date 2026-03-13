@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row'
 import { Representantes } from './Representantes'
 import { Calendar } from './Calendar'
 import { getParticipantsState } from '../components/redux/participantsSlice'
-import { SHOW_CALENDAR } from '../Consts'
+import { MOSTRAR_CALENDARIO } from '../Consts'
 
 export function App() {
   const { showForm } = useSelector(getParticipantsState)
@@ -15,7 +15,7 @@ export function App() {
         <Form.Group className="col-md-5 m-4">
           <Representantes />
         </Form.Group>
-        <Form.Group className="col-md  m-4">{showForm & SHOW_CALENDAR ? <Calendar /> : null}</Form.Group>
+        <Form.Group className="col-md  m-4">{showForm & MOSTRAR_CALENDARIO ? <Calendar /> : null}</Form.Group>
       </Row>
     </Form>
   )

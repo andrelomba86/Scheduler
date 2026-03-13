@@ -8,7 +8,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip'
 import { DatesChecker } from '../DatesChecker'
 
-import { MONTHS, PERIOD_OF_THE_DAY_MORNING, PERIOD_OF_THE_DAY_AFTERNOON } from '../Consts'
+import { MESES, PERIODO_DO_DIA_MANHA, PERIODO_DO_DIA_NOITE } from '../Consts'
 
 import { useSelector } from 'react-redux'
 
@@ -38,7 +38,7 @@ export function Calendar() {
         </Form.Label>
         <Col sm="7">
           <Form.Select value={month} onChange={e => setMonth(e.target.value)}>
-            {MONTHS.map((item, index) => (
+            {MESES.map((item, index) => (
               <option value={index} key={index}>
                 {item}
               </option>
@@ -113,11 +113,11 @@ export function DayNumber({ dayArray }) {
 }
 
 export function DayOfCalendar({ dayArray }) {
-  if (dayArray[PERIOD_OF_THE_DAY_MORNING]) {
+  if (dayArray[PERIODO_DO_DIA_MANHA]) {
     return (
       <>
-        <CellPeriodOfDay periodValue={dayArray[PERIOD_OF_THE_DAY_MORNING]} />
-        <CellPeriodOfDay periodValue={dayArray[PERIOD_OF_THE_DAY_AFTERNOON]} />
+        <CellPeriodOfDay periodValue={dayArray[PERIODO_DO_DIA_MANHA]} />
+        <CellPeriodOfDay periodValue={dayArray[PERIODO_DO_DIA_NOITE]} />
       </>
     )
   } else {

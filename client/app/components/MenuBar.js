@@ -4,42 +4,78 @@ import Nav from 'react-bootstrap/Nav'
 import { GearFill } from 'react-bootstrap-icons'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import ExtractorPage from './extractor/index.js'
 
 export function MenuBar() {
   const [showSettings, setShowSettings] = useState(false)
   const [semesters, setSemesters] = useState(getSemesterDates())
+  const [showExtractor, setShowExtractor] = useState(false)
 
   useEffect(() => {
     localStorage.setItem('semesters', JSON.stringify(semesters))
   }, [semesters])
 
   const toggleSettings = useCallback(() => setShowSettings(prev => !prev), [])
+  const openExtractor = useCallback(() => setShowExtractor(true), [])
+  const closeExtractor = useCallback(() => setShowExtractor(false), [])
 
   return (
-    <Navbar bg="primary" data-bs-theme="dark" expand="lg">
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav>
-          <Nav.Link className="ml-4" href="#settings" onClick={toggleSettings}>
-            <GearFill size={24} />
-          </Nav.Link>
-        </Nav>
-        {showSettings && (
+    <>
+      <Navbar bg="primary" data-bs-theme="dark" expand="lg">
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
           <Nav>
-            <NavDatePicker
-              label="1º Semestre:"
-              current={semesters.firstSemester}
-              onChange={dates => setSemesters(prev => ({ ...prev, firstSemester: dates }))}
-            />
-            <NavDatePicker
-              label="2º Semestre:"
-              current={semesters.secondSemester}
-              onChange={dates => setSemesters(prev => ({ ...prev, secondSemester: dates }))}
-            />
+            <Nav.Link className="ml-4" href="#settings" onClick={toggleSettings}>
+              <GearFill size={24} />
+            </Nav.Link>
+            <Nav.Link className="ml-4" href="#extractor" onClick={openExtractor}>
+              Extrair Dados
+            </Nav.Link>
           </Nav>
-        )}
-      </Navbar.Collapse>
-    </Navbar>
+          {showSettings && (
+            <Nav>
+              <NavDatePicker
+                label="1º Semestre:"
+                current={semesters.firstSemester}
+                onChange={dates => setSemesters(prev => ({ ...prev, firstSemester: dates }))}
+              />
+              <NavDatePicker
+                label="2º Semestre:"
+                current={semesters.secondSemester}
+                onChange={dates => setSemesters(prev => ({ ...prev, secondSemester: dates }))}
+              />
+            </Nav>
+          )}
+        </Navbar.Collapse>
+      </Navbar>
+      {showExtractor && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: '#0008',
+            zIndex: 9999,
+          }}>
+          <div
+            style={{
+              maxWidth: 700,
+              margin: '60px auto',
+              background: '#fff',
+              borderRadius: 8,
+              boxShadow: '0 2px 8px #0003',
+              padding: 32,
+            }}>
+            <button onClick={closeExtractor} style={{ float: 'right', marginBottom: 8 }}>
+              Fechar
+            </button>
+            <ExtractorPage />
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
@@ -76,9 +112,14 @@ export function getSemesterDates() {
       fim: new Date(currentYear, 11, 7),
     },
   }
-
-  const semesters = JSON.parse(localStorage.getItem('semesters')) || defaultSemesters
-  // const semesters = defaultSemesters
+  //const semesters = JSON.parse(localStorage.getItem('semesters')) || defaultSemesters
+  let semesters = defaultSemesters
+  if (typeof window !== 'undefined' && window.localStorage) {
+    const stored = localStorage.getItem('semesters')
+    if (stored) {
+      semesters = JSON.parse(stored)
+    }
+  }
 
   return semesters
 }

@@ -5,13 +5,13 @@ import ListGroup from 'react-bootstrap/ListGroup'
 import Badge from 'react-bootstrap/Badge'
 
 import {
-  SHOW_NAMES_AND_DATES_AND_CALENDAR,
-  SHOW_NAMES_AND_ADD_DATES,
-  SHOW_NAMES_AND_EDIT_DATES,
-  SHOW_NAMES_AND_REMOVE_DATES,
-  SHOW_REMOVE_DATES_PROMPT,
-  DAY_OF_WEEK,
-  PERIOD_OF_THE_DAY,
+  MOSTRAR_NOMES_DATAS_E_CALENDARIO,
+  MOSTRAR_NOMES_E_DATAS,
+  MOSTRAR_NOMES_E_EDITAR_DATAS,
+  MOSTRAR_NOMES_E_REMOVER_DATAS,
+  MOSTRAR_REMOVER_DATAS,
+  DIA_DA_SEMANA,
+  PERIODO_DO_DIA,
 } from '../Consts'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -38,21 +38,21 @@ export function ListDates({ setDateIndex }) {
           <ListGroup.Item
             className="d-flex justify-content-between align-items-center"
             style={{
-              color: showForm & SHOW_REMOVE_DATES_PROMPT && delIndex !== index ? '#ddd' : '#000',
+              color: showForm & MOSTRAR_REMOVER_DATAS && delIndex !== index ? '#ddd' : '#000',
             }}
             key={index}>
             Período: {convertDate(item.start)} a {convertDate(item.end)}
-            {item.daysOfWeekAndPeriod.map((period, day) => {
+            {item.daysOfWeekAndPeriod?.map((period, day) => {
               if (period) {
                 return (
                   <Fragment key={day}>
-                    <br />- {DAY_OF_WEEK[day]} de {PERIOD_OF_THE_DAY[period]}
+                    <br />- {DIA_DA_SEMANA[day]} de {PERIODO_DO_DIA[period]}
                   </Fragment>
                 )
               }
               return null
             })}
-            {showForm & SHOW_REMOVE_DATES_PROMPT ? (
+            {showForm & MOSTRAR_REMOVER_DATAS ? (
               delIndex === index && (
                 <div>
                   <Badge
@@ -68,7 +68,7 @@ export function ListDates({ setDateIndex }) {
                     as="a"
                     href="#"
                     className="ms-1 text-decoration-none"
-                    onClick={() => dispatch(setShowForm(SHOW_NAMES_AND_DATES_AND_CALENDAR))}>
+                    onClick={() => dispatch(setShowForm(MOSTRAR_NOMES_DATAS_E_CALENDARIO))}>
                     Cancelar
                   </Badge>
                 </div>
@@ -81,7 +81,7 @@ export function ListDates({ setDateIndex }) {
                   href="#"
                   className="text-decoration-none"
                   onClick={() => {
-                    dispatch(setShowForm(SHOW_NAMES_AND_EDIT_DATES))
+                    dispatch(setShowForm(MOSTRAR_NOMES_E_EDITAR_DATAS))
                     dispatch(setEditDateIndex(index))
                   }}>
                   Editar
@@ -92,7 +92,7 @@ export function ListDates({ setDateIndex }) {
                   href="#"
                   className="ms-1 text-decoration-none"
                   onClick={() => {
-                    dispatch(setShowForm(SHOW_NAMES_AND_REMOVE_DATES))
+                    dispatch(setShowForm(MOSTRAR_NOMES_E_REMOVER_DATAS))
                     setDelIndex(index)
                   }}>
                   Excluir
@@ -108,7 +108,7 @@ export function ListDates({ setDateIndex }) {
       )}
 
       <ButtonGroup size="sm" className="w-100 mt-2">
-        <Button variant="success" onClick={() => dispatch(setShowForm(SHOW_NAMES_AND_ADD_DATES))}>
+        <Button variant="success" onClick={() => dispatch(setShowForm(MOSTRAR_NOMES_E_DATAS))}>
           Adicionar período
         </Button>
       </ButtonGroup>

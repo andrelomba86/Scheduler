@@ -3,8 +3,8 @@ import {
   // DAY_OF_WEEK,
   // DAY_OF_WEEK_NUM,
   // PERIOD_OF_THE_DAY,
-  PERIOD_OF_THE_DAY_MORNING,
-  PERIOD_OF_THE_DAY_AFTERNOON,
+  PERIODO_DO_DIA_MANHA,
+  PERIODO_DO_DIA_NOITE,
 } from './Consts.js'
 
 export function DatesChecker() {
@@ -18,8 +18,8 @@ export function DatesChecker() {
   function DateAvailabilityPoints(dateToCheck) {
     var points = {
       0: 0,
-      [PERIOD_OF_THE_DAY_MORNING]: [0, []],
-      [PERIOD_OF_THE_DAY_AFTERNOON]: [0, []],
+      [PERIODO_DO_DIA_MANHA]: [0, []],
+      [PERIODO_DO_DIA_NOITE]: [0, []],
     }
     const pointsIndex = 0
     const namesIndex = 1
@@ -32,32 +32,32 @@ export function DatesChecker() {
         if (IsBetweenDatesCheck(dateToCheck, new Date(date.start), new Date(date.end))) {
           var week = date.daysOfWeekAndPeriod
           // Confere se foi indicado dia da semana (caso a Array esteja com 0's então não foi indicado)
-          if (week.every(item => item === 0)) {
-            if (!FindInArray(doc.name, points[PERIOD_OF_THE_DAY_MORNING][namesIndex])) {
-              points[PERIOD_OF_THE_DAY_MORNING][pointsIndex]++
-              points[PERIOD_OF_THE_DAY_MORNING][namesIndex].push(doc.name)
+          if (!week || week.every(item => item === 0)) {
+            if (!findInArray(doc.name, points[PERIODO_DO_DIA_MANHA][namesIndex])) {
+              points[PERIODO_DO_DIA_MANHA][pointsIndex]++
+              points[PERIODO_DO_DIA_MANHA][namesIndex].push(doc.name)
             }
-            if (!FindInArray(doc.name, points[PERIOD_OF_THE_DAY_AFTERNOON][namesIndex])) {
-              points[PERIOD_OF_THE_DAY_AFTERNOON][pointsIndex]++
-              points[PERIOD_OF_THE_DAY_AFTERNOON][namesIndex].push(doc.name)
+            if (!findInArray(doc.name, points[PERIODO_DO_DIA_NOITE][namesIndex])) {
+              points[PERIODO_DO_DIA_NOITE][pointsIndex]++
+              points[PERIODO_DO_DIA_NOITE][namesIndex].push(doc.name)
             }
           } else {
             var dayOfWeekValue = week[dateToCheck.getDay()]
 
             if (dayOfWeekValue > 0) {
               if (
-                dayOfWeekValue & PERIOD_OF_THE_DAY_MORNING &&
-                !FindInArray(doc.name, points[PERIOD_OF_THE_DAY_MORNING][namesIndex])
+                dayOfWeekValue & PERIODO_DO_DIA_MANHA &&
+                !findInArray(doc.name, points[PERIODO_DO_DIA_MANHA][namesIndex])
               ) {
-                points[PERIOD_OF_THE_DAY_MORNING][pointsIndex]++
-                points[PERIOD_OF_THE_DAY_MORNING][namesIndex].push(doc.name)
+                points[PERIODO_DO_DIA_MANHA][pointsIndex]++
+                points[PERIODO_DO_DIA_MANHA][namesIndex].push(doc.name)
               }
               if (
-                dayOfWeekValue & PERIOD_OF_THE_DAY_AFTERNOON &&
-                !FindInArray(doc.name, points[PERIOD_OF_THE_DAY_AFTERNOON][namesIndex])
+                dayOfWeekValue & PERIODO_DO_DIA_NOITE &&
+                !findInArray(doc.name, points[PERIODO_DO_DIA_NOITE][namesIndex])
               ) {
-                points[PERIOD_OF_THE_DAY_AFTERNOON][pointsIndex]++
-                points[PERIOD_OF_THE_DAY_AFTERNOON][namesIndex].push(doc.name)
+                points[PERIODO_DO_DIA_NOITE][pointsIndex]++
+                points[PERIODO_DO_DIA_NOITE][namesIndex].push(doc.name)
               }
             }
           }
@@ -67,7 +67,7 @@ export function DatesChecker() {
     return points
   }
 
-  function FindInArray(name, array) {
+  function findInArray(name, array) {
     if (array.find(p => p === name) === undefined) return false
     return true
   }

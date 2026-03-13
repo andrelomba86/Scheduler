@@ -7,14 +7,14 @@ import { PromptUpdateDate } from './PromptUpdateDate'
 import { ListDates } from './ListDates'
 
 import {
-  SHOW_NAMES,
-  SHOW_DATES,
-  SHOW_ADD_PARTICIPANT_PROMPT,
-  SHOW_REMOVE_PARTICIPANT_PROMPT,
-  SHOW_ADD_PARTICIPANT_AND_CALENDAR,
-  SHOW_REMOVE_PARTICIPANT_AND_CALENDAR,
-  SHOW_ADD_DATES_PROMPT,
-  SHOW_EDIT_DATES_PROMPT,
+  MOSTRAR_NOMES,
+  MOSTRAR_DATAS,
+  MOSTRAR_ADICIONAR_PARTICIPANTE,
+  MOSTRAR_REMOVER_PARTICIPANTE,
+  MOSTRAR_ADICIONAR_PARTICIPANTE_E_CALENDARIO,
+  MOSTRAR_REMOVER_PARTICIPANTE_E_CALENDARIO,
+  MOSTRAR_ADICIONAR_DATAS,
+  MOSTRAR_EDITAR_DATAS,
 } from '../Consts.js'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -42,11 +42,11 @@ export function Representantes() {
   // console.log('Participantes - rendering')
   return (
     <>
-      {showForm & SHOW_NAMES ? <ListParticipantsNames /> : null}
-      {showForm & SHOW_ADD_PARTICIPANT_PROMPT ? <PromptAddParticipant /> : null}
-      {showForm & SHOW_REMOVE_PARTICIPANT_PROMPT ? <PromptRemoveParticipant /> : null}
-      {showForm & SHOW_DATES ? <ListDates /> : null}
-      {showForm & (SHOW_ADD_DATES_PROMPT | SHOW_EDIT_DATES_PROMPT) ? <PromptUpdateDate /> : null}
+      {showForm & MOSTRAR_NOMES ? <ListParticipantsNames /> : null}
+      {showForm & MOSTRAR_ADICIONAR_PARTICIPANTE ? <PromptAddParticipant /> : null}
+      {showForm & MOSTRAR_REMOVER_PARTICIPANTE ? <PromptRemoveParticipant /> : null}
+      {showForm & MOSTRAR_DATAS ? <ListDates /> : null}
+      {showForm & (MOSTRAR_ADICIONAR_DATAS | MOSTRAR_EDITAR_DATAS) ? <PromptUpdateDate /> : null}
     </>
   )
 }
@@ -73,12 +73,12 @@ export function ListParticipantsNames(props) {
       <ButtonGroup className="w-100 mb-5">
         <Button
           variant="outline-primary"
-          onClick={() => dispatch(setShowForm(SHOW_ADD_PARTICIPANT_AND_CALENDAR))}>
+          onClick={() => dispatch(setShowForm(MOSTRAR_ADICIONAR_PARTICIPANTE_E_CALENDARIO))}>
           Adicionar
         </Button>
         <Button
           variant="outline-primary"
-          onClick={() => dispatch(setShowForm(SHOW_REMOVE_PARTICIPANT_AND_CALENDAR))}>
+          onClick={() => dispatch(setShowForm(MOSTRAR_REMOVER_PARTICIPANTE_E_CALENDARIO))}>
           Remover
         </Button>
         {/* <Button variant='outline-primary'>Editar</Button> */}
