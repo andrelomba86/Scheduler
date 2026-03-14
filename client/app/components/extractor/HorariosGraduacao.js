@@ -92,10 +92,8 @@ function extrairDadosDoCSV(csvRows, semesters, dadosDosParticipantes) {
     dadosDosParticipantes.forEach(({ name: participante, _id, dates: agendaOriginal }) => {
       if (!row['Docente(s)'].includes(participante)) return
 
-      // console.log('agenda', participante, _id, agendaOriginal)
-
       if (!dadosDeSaida[participante]) {
-        dadosDeSaida[participante] = { _id, agenda: Array.from(agendaOriginal) }
+        dadosDeSaida[participante] = { _id, agenda: structuredClone(agendaOriginal) }
       }
 
       let entrada = dadosDeSaida[participante].agenda.find(
@@ -111,11 +109,8 @@ function extrairDadosDoCSV(csvRows, semesters, dadosDosParticipantes) {
 
         dadosDeSaida[participante].agenda.push(entrada)
       }
-
       arrayDiasDaSemana.forEach((periodoDoDia, nDiaSemana) => {
         if (periodoDoDia === 0) return
-        console.log(entrada, nDiaSemana)
-
         if (entrada.daysOfWeekAndPeriod[nDiaSemana] === 0)
           entrada.daysOfWeekAndPeriod[nDiaSemana] = periodoDoDia
         else if (entrada.daysOfWeekAndPeriod[nDiaSemana] !== periodoDoDia)
@@ -129,51 +124,44 @@ function extrairDadosDoCSV(csvRows, semesters, dadosDosParticipantes) {
 
 export default function FrequenciaDocente() {
   const [input, setInput] = useState('')
-  const [dadosExtraidos, setExtractResult] = useState(null)
+  const [dadosExtraidos, setDadosExtraidos] = useState(null)
   const [status, setStatus] = useState({ message: '', type: 'info' })
   const semesters = getSemesterDates()
 
   const { dbCollection } = useSelector(getParticipantsState)
   const dispatch = useDispatch()
-  const nomesDosParticipantes = dbCollection.reduce((acc, p) => [...acc, p.name], [])
+  // const nomesDosParticipantes = dbCollection.reduce((acc, p) => [...acc, p.name], [])
 
-  const handleExtract = () => {
+  const handleExtrairDados = () => {
     const csvData = Papa.parse(input, { header: true }).data
     const parsed = extrairDadosDoCSV(csvData, semesters, dbCollection)
-    setExtractResult(parsed)
+    setDadosExtraidos(parsed)
     setStatus({ message: '' })
   }
 
-  const handleSave = async () => {
+  const handleSalvarDados = async () => {
     if (!dadosExtraidos) return
     setStatus({ message: 'Salvando...', type: 'info' })
     try {
-      console.log(dadosExtraidos)
-      Object.entries(dadosExtraidos).forEach(([participante, { _id, agenda }]) => {
-        console.log(participante, _id, agenda)
-      })
+      console.log('extraidos', dadosExtraidos)
+      console.log('dbCollection', dbCollection)
+      //return
+      await Promise.all(
+        Object.entries(dadosExtraidos).map(async ([participante, { _id, agenda }]) => {
+          const response = await axios.post('/update', { id: _id, values: { dates: agenda } })
+          if (!response.data.result) {
+            console.error(
+              `Erro ao atualizar participante ${participante}:, id ${_id}, agenda: ${agenda}`,
+              response.data.result.error,
+            )
+          } else {
+            console.log(`Atualizado ${participante} com sucesso!`, response.data)
+          }
+        }),
+      )
+      dispatch(updateDBCollection())
 
-      // let ignoredParticipants = Object.keys(extractResult)
-      // for (let participant of dbCollection) {
-      //   const foundParticipant = dbCollection.find(item => item.name === participant.name)
-
-      //   if (foundParticipant) {
-      //     const participantId = foundParticipant._id
-      //     const values = {
-      //       name: participant.name,
-      //       dates: [...(participant.data ?? []), ...(extractResult[participant.name] ?? [])],
-      //     }
-      //     // console.log('Atualizando participante', values)
-      //     const response = await axios.post('/update', { id: participantId, values })
-
-      //     ignoredParticipants = ignoredParticipants.filter(name => name !== participant.name)
-
-      //     // console.log('Resposta update', response.data)
-      //   }
-      // }
-      // dispatch(updateDBCollection())
-
-      setStatus('Dados salvos/atualizados com sucesso!')
+      setStatus({ message: 'Dados salvos/atualizados com sucesso!', type: 'info' })
     } catch (err) {
       setStatus({ message: 'Erro ao salvar: ' + err.message, type: 'error' })
       console.error(err.stack || err)
@@ -190,7 +178,7 @@ export default function FrequenciaDocente() {
         placeholder="Cole o CSV do do horários aqui"
       />
       <br />
-      <button onClick={handleExtract} style={{ marginTop: 12 }}>
+      <button onClick={handleExtrairDados} style={{ marginTop: 12 }}>
         Extrair
       </button>
       {dadosExtraidos && (
@@ -204,7 +192,7 @@ export default function FrequenciaDocente() {
               padding: 12,
               background: '#fafafa',
             }}>
-            <h3>Dados Extraídos:</h3>
+            <h4>Como ficarão os dados mesclados:</h4>
             {Object.entries(dadosExtraidos).map(([nome, { agenda }]) => (
               <div key={nome} style={{ marginBottom: 16 }}>
                 <strong>{nome}</strong>
@@ -215,15 +203,17 @@ export default function FrequenciaDocente() {
                       {new Date(datas.end).toLocaleDateString()}
                       <ul>
                         <li key={idx}>
-                          {datas.daysOfWeekAndPeriod.map((periodoEmNumero, periodoIndex) =>
-                            periodoEmNumero > 0 ? (
-                              <li key={periodoIndex}>
-                                {DIA_DA_SEMANA[periodoIndex]} - {PERIODO_DO_DIA[periodoEmNumero]}
-                              </li>
-                            ) : (
-                              ''
-                            ),
-                          )}
+                          <ul>
+                            {datas.daysOfWeekAndPeriod?.map((periodoEmNumero, periodoIndex) =>
+                              periodoEmNumero > 0 ? (
+                                <li key={periodoIndex}>
+                                  {DIA_DA_SEMANA[periodoIndex]} - {PERIODO_DO_DIA[periodoEmNumero]}
+                                </li>
+                              ) : (
+                                ''
+                              ),
+                            )}
+                          </ul>
                         </li>
                       </ul>
                     </li>
@@ -232,7 +222,7 @@ export default function FrequenciaDocente() {
               </div>
             ))}
           </div>
-          <button onClick={handleSave} style={{ marginTop: 16 }}>
+          <button onClick={handleSalvarDados} style={{ marginTop: 16 }}>
             Salvar no Banco
           </button>
           <div style={{ marginTop: 8, color: status.type === 'error' ? 'red' : 'green' }}>
