@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import FrequenciaDocente from './FrequenciaDocente'
 import HorariosGraduacao from './HorariosGraduacao'
-import HorariosPosGraduacao from './HorariosPosGraduacao'
+import AulasDeCampo from './AulasDeCampo'
 
 const extratores = [
   { label: 'Frequência docente [SISRH]', value: 'frequencia', component: FrequenciaDocente },
   { label: 'Horários de disciplinas da graduação', value: 'graduacao', component: HorariosGraduacao },
   {
-    label: 'Horários de disciplinas da pós-graduação [CSV - SisGrad]',
-    value: 'posgraduacao',
-    component: HorariosPosGraduacao,
+    label: 'Aulas de campo',
+    value: 'aulasdecampo',
+    component: AulasDeCampo,
   },
 ]
 
